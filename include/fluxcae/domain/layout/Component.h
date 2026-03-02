@@ -19,9 +19,6 @@ namespace fluxcae {
 namespace domain {
 namespace layout {
 
-/**
- * @brief ComponentType Component type
- */
 enum class ComponentType {
     Generic,
     IC,
@@ -44,9 +41,6 @@ enum class ComponentType {
     Module
 };
 
-/**
- * @brief Component represents electronic component
- */
 class Component : public std::enable_shared_from_this<Component> {
 public:
     using Id = uint64_t;
@@ -59,9 +53,8 @@ public:
 
     ~Component() = default;
 
-    // Properties
     Id id() const { return id_; }
-    id) { id void setId(Id_ = id; }
+    void setId(Id id) { id_ = id; }
 
     const std::string& name() const { return name_; }
     void setName(const std::string& name) { name_ = name; }
@@ -72,13 +65,11 @@ public:
     const std::string& package() const { return package_; }
     void setPackage(const std::string& pkg) { package_ = pkg; }
 
-    // Transform
     const math::Transform& transform() const { return transform_; }
     math::Transform& transform() { return transform_; }
 
     math::Box bbox() const;
 
-    // Pin management
     PinPtr createPin(const std::string& name, const math::Point& position);
     bool addPin(PinPtr pin);
     bool removePin(PinPtr pin);
@@ -86,11 +77,9 @@ public:
     size_t pinCount() const { return pins_.size(); }
     PinPtr findPin(const std::string& name) const;
 
-    // Package shapes
     void addPackageShape(ShapePtr shape);
     const std::vector<ShapePtr>& packageShapes() const { return packageShapes_; }
 
-    // Parameters
     const std::string& value() const { return value_; }
     void setValue(const std::string& val) { value_ = val; }
 
@@ -103,7 +92,6 @@ public:
     const std::string& partNumber() const { return partNumber_; }
     void setPartNumber(const std::string& pn) { partNumber_ = pn; }
 
-    // Serialization
     static const char* typeToString(ComponentType type);
     static ComponentType stringToType(const std::string& str);
     std::string toString() const;
