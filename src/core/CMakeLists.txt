@@ -1,13 +1,13 @@
 cmake_minimum_required(VERSION 3.15)
 
-# Core模块 - 无GUI依赖
+# Core module - No GUI dependency
 project(FluxCAE_Core VERSION 0.1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-# 源文件列表 - 只包含实际存在的文件
+# Source files
 set(CORE_SOURCES
     # Foundation - Utils
     Logger.cpp
@@ -18,32 +18,51 @@ set(CORE_SOURCES
     # Domain - Layout
     Layout.cpp
     Cell.cpp
+    Layer.cpp
+    Shape.cpp
+    Via.cpp
+    Drill.cpp
+    SpatialIndex.cpp
+    
+    # Domain - Netlist
+    Netlist.cpp
+    Net.cpp
+    Component.cpp
+    Pin.cpp
+    
+    # Domain - Stackup
+    LayerStack.cpp
+    Material.cpp
+    StackupLayer.cpp
     
     # Service - Transaction
     Command.cpp
+    
+    # Service - Plugin
+    PluginManager.cpp
 )
 
-# 头文件目录
+# Header files directory
 set(CORE_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../../include)
 
-# 创建库
+# Create library
 add_library(fluxcae_core STATIC ${CORE_SOURCES})
 
-# 设置包含目录
+# Include directories
 target_include_directories(fluxcae_core PUBLIC 
     ${CMAKE_CURRENT_SOURCE_DIR}/../../include
 )
 
-# 链接Qt5 Core
+# Link Qt5 Core
 target_link_libraries(fluxcae_core PUBLIC Qt5::Core)
 
-# 设置输出目录
+# Output directory
 set_target_properties(fluxcae_core PROPERTIES
     ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
     LIBRARY_OUTPUT_DIRECTORY ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
 )
 
-# 安装
+# Installation
 install(TARGETS fluxcae_core
     ARCHIVE DESTINATION lib
     LIBRARY DESTINATION lib
