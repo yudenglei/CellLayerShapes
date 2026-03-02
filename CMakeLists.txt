@@ -20,10 +20,10 @@ else()
     add_compile_options(-Wall -Wextra -O3)
 endif()
 
-# Find Qt5 (only Core and Widgets, no GUI for now to simplify build)
+# Find Qt5 (only Core and Widgets)
 find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
 
-# Optional features - disabled by default (can enable if needed)
+# Optional features - disabled by default
 option(BUILD_GUI "Build GUI application" OFF)
 option(BUILD_CLI "Build CLI application (Headless)" ON)
 option(BUILD_TESTS "Build tests" ON)
@@ -36,6 +36,10 @@ include_directories(
 
 # Subdirectories
 add_subdirectory(src/core)
+
+if(BUILD_CLI)
+    add_subdirectory(src/cli)
+endif()
 
 if(BUILD_TESTS)
     enable_testing()
