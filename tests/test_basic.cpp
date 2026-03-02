@@ -6,6 +6,7 @@
  */
 #include <iostream>
 #include <cassert>
+#include <memory>
 #include "fluxcae/fluxcae.h"
 
 using namespace fluxcae;
@@ -15,13 +16,13 @@ void testPoint() {
     std::cout << "Testing Point..." << std::endl;
     
     math::Point p1(10, 20);
-    assert(p1.x() == 10);
-    assert(p1.y() == 20);
+    assert(p1.x == 10);
+    assert(p1.y == 20);
     
     math::Point p2(30, 40);
     math::Point p3 = p1 + p2;
-    assert(p3.x() == 40);
-    assert(p3.y() == 60);
+    assert(p3.x == 40);
+    assert(p3.y == 60);
     
     auto dist = p1.distance(p2);
     assert(dist > 0);
@@ -34,17 +35,17 @@ void testBox() {
     std::cout << "Testing Box..." << std::endl;
     
     math::Box box(10, 20, 100, 200);
-    assert(box.left() == 10);
-    assert(box.bottom() == 20);
-    assert(box.right() == 100);
-    assert(box.top() == 200);
+    assert(box.x1 == 10);
+    assert(box.y1 == 20);
+    assert(box.x2 == 100);
+    assert(box.y2 == 200);
     
     math::Box box2(50, 60, 150, 250);
-    math::Box merged = box + box2;
-    assert(merged.left() == 10);
-    assert(merged.bottom() == 20);
-    assert(merged.right() == 150);
-    assert(merged.top() == 250);
+    math::Box merged = math::Box::merge(box, box2);
+    assert(merged.x1 == 10);
+    assert(merged.y1 == 20);
+    assert(merged.x2 == 150);
+    assert(merged.y2 == 250);
     
     assert(box.contains(math::Point(50, 100)));
     assert(!box.contains(math::Point(0, 0)));
@@ -146,6 +147,21 @@ void testMemoryPool() {
     std::cout << "  MemoryPool tests passed!" << std::endl;
 }
 
+// Test LayerStack
+void testLayerStack() {
+    std::cout << "Testing LayerStack..." << std::endl;
+    
+    auto stack = domain::layout::LayerStack::create2LayerBoard();
+    assert(stack != nullptr);
+    assert(stack->layerCount() == 3);
+    
+    auto layer1 = stack->getLayer(0);
+    assert(layer1 != nullptr);
+    assert(layer1->isOuter());
+    
+    std::cout << "  LayerStack tests passed!" << std::endl;
+}
+
 // Main
 int main() {
     std::cout << "=== FluxCAE Unit Tests ===" << std::endl;
@@ -157,6 +173,7 @@ int main() {
         testCell();
         testTransaction();
         testMemoryPool();
+        testLayerStack();
         
         std::cout << "\n=== All tests passed! ===" << std::endl;
         return 0;
