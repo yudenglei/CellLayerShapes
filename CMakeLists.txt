@@ -1,1 +1,47 @@
-cmake_minimum_required(VERSION 3.10)\nset(CMAKE_CXX_STANDARD 14)\nset(CMAKE_CXX_STANDARD_REQUIRED ON)\nset(CMAKE_CXX_EXTENSIONS OFF)\n\n\nset(CMAKE_PREFIX_PATH "C:/path/to/Qt5.13")\n\n# Include third-party libraries\nfind_package(YourThirdPartyLib REQUIRED)\n\ninclude_directories(${YourThirdPartyLib_INCLUDE_DIRS})\nlink_directories(${YourThirdPartyLib_LIBRARY_DIRS})\n\nadd_executable(YourExecutableName main.cpp)\ntarget_link_libraries(YourExecutableName ${YourThirdPartyLib_LIBRARIES})\n\ndecision(MSVC)\n    # VS2019 specific optimization flags\n    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /O2")\nendif()\n\nset_property(TARGET YourExecutableName PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")\n\n
+cmake_minimum_required(VERSION 3.15)
+
+# FluxCAE Project
+project(FluxCAE VERSION 0.1.0 LANGUAGES CXX)
+
+# C++ Standard
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+# Output directories
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+
+# Compiler options
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_compile_options(-Wall -Wextra -g -O0)
+else()
+    add_compile_options(-Wall -Wextra -O3)
+endif()
+
+# Find Qt5 (only Core and Widgets, no GUI for now to simplify build)
+find_package(Qt5 REQUIRED COMPONENTS Core Widgets)
+
+# Optional features - disabled by default (can enable if needed)
+option(BUILD_GUI "Build GUI application" OFF)
+option(BUILD_CLI "Build CLI application (Headless)" ON)
+option(BUILD_TESTS "Build tests" ON)
+
+# Include directories
+include_directories(
+    ${CMAKE_SOURCE_DIR}/include
+    ${CMAKE_SOURCE_DIR}/src
+)
+
+# Subdirectories
+add_subdirectory(src/core)
+
+if(BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
+
+# Installation
+install(DIRECTORY include/fluxcae DESTINATION include)
+install(DIRECTORY docs/ DESTINATION share/doc/fluxcae)
